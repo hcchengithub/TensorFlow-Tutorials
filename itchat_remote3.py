@@ -47,6 +47,20 @@ def console(msg,cmd):
             send_chunk(screen, msg.user.send)
         send_chunk("OK", msg.user.send)
 
+#        
+# 讓 Inception V3 看照片，回答那啥。        
+#        
+def predict(msg):
+    results = time.ctime() + '\n'
+    results += 'Google Inception V3 thinks it is:\n'
+    msg.download(msg.fileName)  # 放在 working directory 下
+    if msg.fileName.strip().lower().endswith((".jpeg",'.jpg')):
+        pred = model.classify(image_path=msg.fileName.strip())
+        results += model.print_scores(pred=pred,k=10,only_first_name=True)
+    else:
+        results += 'Ooops! jpeg pictures only, please. {} is not one.\n'.format(msg.fileName)
+    return results
+        
 @itchat.msg_register(TEXT)
 def _(msg):
     if peforth.vm.debug==99: peforth.ok('99> ',loc=locals(),cmd=":> [0] inport cr")  # breakpoint    
@@ -57,36 +71,37 @@ def _(msg):
     if peforth.vm.debug==11: peforth.ok('11> ',loc=locals(),cmd=":> [0] inport cr")  # breakpoint    
     send_chunk('%s: %s' % (msg.type, msg.text), msg.user.send)
 
-def predict(msg):
-    results = time.ctime() + '\n'
-    results += 'Google Inception V3 thinks it is:\n'
-    msg.download(msg.fileName)  # 放在 working directory 下
-    pred = model.classify(image_path=msg.fileName.strip())
-    results += model.print_scores(pred=pred,k=10,only_first_name=True)
-    return results
+#
+# 不要干擾借用帳號的同仁，只在特定的 ChatRoom 裡工作。
+#
+# @itchat.msg_register(PICTURE)
+# def _(msg):
+#     if peforth.vm.debug==2211: peforth.ok('2211> ',loc=locals(),cmd=":> [0] constant loc2211 cr")  # breakpoint    
+#     # msg.download(msg.fileName)  # 放在 working directory 下
+#     # pred = model.classify(image_path=msg.fileName.strip())
+#     # results = model.print_scores(pred=pred,k=10,only_first_name=True)
+#     return predict(msg)
     
-@itchat.msg_register(PICTURE)
-def _(msg):
-    if peforth.vm.debug==2211: peforth.ok('2211> ',loc=locals(),cmd=":> [0] constant loc2211 cr")  # breakpoint    
-    # msg.download(msg.fileName)  # 放在 working directory 下
-    # pred = model.classify(image_path=msg.fileName.strip())
-    # results = model.print_scores(pred=pred,k=10,only_first_name=True)
-    return predict(msg)
-    
-@itchat.msg_register([RECORDING, ATTACHMENT, VIDEO])
-def _(msg):
-    if peforth.vm.debug==22: peforth.ok('22> ',loc=locals(),cmd=":> [0] inport cr")  # breakpoint    
-    msg.download(msg.fileName)
-    typeSymbol = {
-        PICTURE: 'img',
-        VIDEO: 'vid', }.get(msg.type, 'fil')
-    return '@%s@%s' % (typeSymbol, msg.fileName)
+# @itchat.msg_register([RECORDING, ATTACHMENT, VIDEO])
+# def _(msg):
+#     if peforth.vm.debug==22: peforth.ok('22> ',loc=locals(),cmd=":> [0] inport cr")  # breakpoint    
+#     msg.download(msg.fileName)
+#     typeSymbol = {
+#         PICTURE: 'img',
+#         VIDEO: 'vid', }.get(msg.type, 'fil')
+#     return '@%s@%s' % (typeSymbol, msg.fileName)
+#
+# @itchat.msg_register(FRIENDS)
+# def _(msg):
+#     if peforth.vm.debug==33: peforth.ok('33> ',loc=locals(),cmd=":> [0] inport cr")  # breakpoint    
+#     msg.user.verify()
+#     send_chunk('Nice to meet you!', msg.user.send)
 
-@itchat.msg_register(FRIENDS)
+@itchat.msg_register(ATTACHMENT, isGroupChat=True)
 def _(msg):
-    if peforth.vm.debug==33: peforth.ok('33> ',loc=locals(),cmd=":> [0] inport cr")  # breakpoint    
-    msg.user.verify()
-    send_chunk('Nice to meet you!', msg.user.send)
+    if peforth.vm.debug==55: peforth.ok('55> ',loc=locals(),cmd=":> [0] inport cr")  # breakpoint    
+    msg.download(msg.fileName)
+    return 'Attachment: %s received at %s' % (msg.fileName,time.ctime())
 
 @itchat.msg_register(TEXT, isGroupChat=True)
 def _(msg):
@@ -102,10 +117,9 @@ def _(msg):
     # pred = model.classify(image_path=msg.fileName.strip())
     # results = model.print_scores(pred=pred,k=10,only_first_name=True)
     send_chunk(predict(msg), msg.user.send)
-
     
 # peforth.vm.debug=99
 itchat.auto_login(True)  # hotReload=True
-itchat.run(False, blockThread=True) # debug=True 
+itchat.run(debug=False, blockThread=True) # debug=True 
 peforth.ok()  # breakpoint    
 
