@@ -38,13 +38,14 @@ ok tf :> __version__ . cr \ ==> 1.4.0
 
     <accept>
     cr cr <text>
-    c:\Users\hcche\Downloads\55.jpg 
+    c:\Users\hcche\Downloads\jeforth.3we logo 2014-10-22.jpeg
     </text>
     model :> classify(image_path=pop().strip()) cr cr 
     model :: print_scores(pred=pop(),k=10,only_first_name=True)
     </accept> dictate 
     
 <comment>    
+
 
     OK ^D
     <text>
@@ -86,6 +87,20 @@ py> librosa.feature.mfcc(v('y,sr')[0],v('y,sr')[1]) to mfcc
 char mfcc mfcc py: globals()[pop()]=pop()
 py> np.pad(mfcc,((0,0),(0,80-len(mfcc[0]))),mode='constant',constant_values=0) to MFCC
 MFCC model :> predict([pop()]) tib.
+
+\ T550 OA in my office
+cd c:\Users\hcche\Documents\GitHub\TensorFlow-Tutorials
+import matplotlib.pyplot constant plt // ( -- module ) matplotlib.pyplot
+import tensorflow constant tf // ( -- module ) TensorFlow
+import numpy constant np // ( -- module ) numpy
+import os constant os // ( -- module ) os
+tf :> __version__ tib. 
+
+\ 我也不懂為何 import inception 非要如此，否則 error : No module named 'inception'
+import sys constant sys // ( -- module )
+sys :: path.append(r'c:\Users\hcche\Documents\GitHub\TensorFlow-Tutorials')
+import inception constant inception // ( -- module ) Function and classes for loading and using the Inception model
+
 </comment>    
         
     
