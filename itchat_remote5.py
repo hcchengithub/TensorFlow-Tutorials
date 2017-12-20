@@ -1,4 +1,4 @@
-﻿import itchat
+import itchat
 from itchat.content import * # TEXT PICTURE 等 constant 的定義
 import peforth
 import matplotlib.pyplot as plt
@@ -126,8 +126,8 @@ def _(msg):
         if msg.isAt: 
             cmd = msg.text.split(maxsplit=1)[1] # remove the leading @nickName
             console(msg, cmd)
-    # return 'Next anti-robot delay time: %i seconds' % (nextDelay)
-    send_chunk('Next anti-robot delay time: %i seconds' % (nextDelay), msg.user.send)
+            # return 'Next anti-robot delay time: %i seconds' % (nextDelay)
+            send_chunk('Next anti-robot delay time: %i seconds' % (nextDelay), msg.user.send)
 
 @itchat.msg_register(PICTURE, isGroupChat=True)
 def _(msg):
